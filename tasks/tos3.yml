@@ -1,0 +1,22 @@
+---
+- name: Export the DB
+  sudo: yes
+  mysql_db:
+    name: "{{ syncs3content.to.database.name }}"
+    state: dump
+    target: "{{ syncs3content.to.storage.dir }}/{{ syncs3content.to.database.dir }}/{{ syncs3content.to.database.name }}.sql"
+
+- name: Compress the DB
+  shell: "tar -pczf {{ syncs3content.to.database.dir }}/{{ syncs3content.to.database.name }}.sql.tar.gz -C {{ syncs3content.to.database.dir }} {{ syncs3content.to.database.name }}.sql"
+  args:
+    chdir: "{{ syncs3content.to.storage.dir }}"
+
+- name: Delete DB File
+  file:
+    path: "{{ syncs3content.to.storage.dir }}/{{ syncs3content.to.database.dir }}/{{ syncs3content.to.database.name }}.sql"
+    state: absent
+
+- name: Uploading content
+  shell: "aws s3 sync . s3://{{ syncs3content.to.storage.bucket }} --profile {{ syncs3content.to.storage.profile }}"
+  args:
+    chdir: "{{ syncs3content.to.storage.dir }}"

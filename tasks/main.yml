@@ -1,0 +1,5 @@
+- include: tos3.yml
+  when: sync_action == "tos3"
+  
+- include: froms3.yml
+  when: sync_action == "froms3"

@@ -1,0 +1,21 @@
+---
+syncs3content:
+  action: False
+  from:
+    storage:
+      bucket: app-storage
+      dir: /mnt/storage/app
+      profile: default
+    database:
+      dir: data/sql/mysql
+      name: app
+      replacements: []
+    post_commands: []
+  to:
+    storage:
+      bucket: app-storage
+      dir: /mnt/storage/app
+      profile: default
+    database:
+      dir: data/sql/mysql
+      name: app

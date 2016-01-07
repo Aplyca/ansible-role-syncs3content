@@ -1,0 +1,34 @@
+---
+- name: Downloading content
+  shell: "aws s3 sync s3://{{ syncs3content.from.storage.bucket }} . --profile {{ syncs3content.from.storage.profile }}"
+  args:
+    chdir: "{{ syncs3content.from.storage.dir }}"
+
+- name: Uncompress the DB
+  unarchive:
+    src: "{{ syncs3content.from.storage.dir }}/{{ syncs3content.from.database.dir }}/{{ syncs3content.from.database.name }}.sql.tar.gz"
+    dest: /tmp
+    copy: no
+
+- name: DB replacements
+  replace:
+    dest: "/tmp/{{ syncs3content.from.database.name }}.sql"
+    regexp: "{{ item.regex }}"
+    replace: "{{ item.replace }}"
+  with_items: syncs3content.from.database.replacements
+
+- name: Import DB
+  sudo: yes
+  mysql_db:
+    name: "{{ syncs3content.from.database.name }}"
+    state: import
+    target: "/tmp/{{ syncs3content.from.database.name }}.sql"
+
+- name: Delete DB File
+  file:
+    path: "/tmp/{{ syncs3content.from.database.name }}.sql"
+    state: absent
+
+- name: Execute post commands, please wait ...
+  shell: "{{ item }}"
+  with_items: syncs3content.from.post_commands
