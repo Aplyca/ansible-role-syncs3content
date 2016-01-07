@@ -9,6 +9,9 @@ syncs3content:
     database:
       dir: data/sql/mysql
       name: app
+      host: localhost
+      password: ""
+      user: ""
       replacements: []
     post_commands: []
   to:
@@ -19,3 +22,6 @@ syncs3content:
     database:
       dir: data/sql/mysql
       name: app
+      host: localhost
+      password: ""
+      user: ""      

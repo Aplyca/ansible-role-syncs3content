@@ -1,7 +1,5 @@
 ---
 - hosts: all
   gather_facts: no
-  vars_files:
-    - settings.yml
   roles:
     - aplyca.SyncS3Content
