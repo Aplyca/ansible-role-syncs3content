@@ -3,6 +3,9 @@ Ansible Role Sync From and To S3
 
 An Ansible role that sync app content from and to S3 on Debian/Ubuntu.
 
+[![Build Status](https://travis-ci.org/Aplyca/ansible-role-syncs3content.svg?branch=master)](https://travis-ci.org/Aplyca/ansible-role-syncs3content)
+[![Circle CI](https://circleci.com/gh/Aplyca/ansible-role-syncs3content.svg?style=svg)](https://circleci.com/gh/Aplyca/ansible-role-syncs3content)
+
 Requirements
 ------------
 

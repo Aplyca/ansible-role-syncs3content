@@ -1,5 +1,5 @@
 - include: tos3.yml
-  when: syncs3content == "tos3"
+  when: syncs3content.action == "tos3"
   
 - include: froms3.yml
-  when: syncs3content == "froms3"
+  when: syncs3content.action == "froms3"
