@@ -30,7 +30,7 @@
     msg: "{{ syncs3content.slack.message }}"
     attachments:
       - title: "Sync content to S3"
-        text: "{{ syncs3content.slack.description }}"
+        text: "{{ syncs3content.to.description }}"
         color: good
         fields:
           - title: "DataBase"
@@ -39,11 +39,11 @@
           - title: "S3 Bucket"
             value: "{{ syncs3content.to.storage.bucket }}"
             short: "true"
-          - title: "Storage"
+          - title: "Storage directory"
             value: "{{ syncs3content.to.storage.dir }}"
             short: "true"
           - title: "Action"
-            value: "{{ syncs3content.action | upper() }}"
+            value: "{{ syncs3content.action }}"
             short: "true"
     username: "{{ syncs3content.slack.username }}"
     channel: "{{ syncs3content.slack.channel }}"

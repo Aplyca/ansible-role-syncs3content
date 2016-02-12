@@ -14,6 +14,7 @@ syncs3content:
       user: ""
       replacements: []
     post_commands: []
+    description: "The content of {{ app }} was synced from S3"
   to:
     storage:
       bucket: app-storage
@@ -25,13 +26,12 @@ syncs3content:
       host: localhost
       password: ""
       user: ""
+    description: "The latest content of {{ app }} was synced to S3"
   slack:
     username: "Ansible"
     icon_emoji: slack
     channel: general
     message: "Sync content of *{{ app }}*"
-    description: "The latest content of {{ app }} is in S3"
 
 app: App
 action: False
-

@@ -1,4 +1,30 @@
 ---
+- name: "From S3: Send notification to Slack"
+  slack:
+    token: "{{ syncs3content.slack.token }}"
+    msg: "{{ syncs3content.slack.message }}"
+    attachments:
+      - title: "Sync content from S3"
+        text: "{{ syncs3content.from.description }}"
+        color: good
+        fields:
+          - title: "DataBase"
+            value: "{{ syncs3content.from.database.name }}"
+            short: "true"
+          - title: "S3 Bucket"
+            value: "{{ syncs3content.from.storage.bucket }}"
+            short: "true"
+          - title: "Storage directory"
+            value: "{{ syncs3content.from.storage.dir }}"
+            short: "true"
+          - title: "Action"
+            value: "{{ syncs3content.action }}"
+            short: "true"
+    username: "{{ syncs3content.slack.username }}"
+    channel: "{{ syncs3content.slack.channel }}"
+    icon_emoji: "{{ syncs3content.slack.icon_emoji }}"
+  when: syncs3content.slack.token is defined
+
 - name: "From S3: Downloading content"
   shell: "aws s3 sync s3://{{ syncs3content.from.storage.bucket }} . --profile {{ syncs3content.from.storage.profile }}"
   args:
@@ -32,3 +58,5 @@
 - name: "From S3: Execute post commands, please wait ..."
   shell: "{{ item }}"
   with_items: syncs3content.from.post_commands
+
+
