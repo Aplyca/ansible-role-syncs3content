@@ -1,7 +1,4 @@
 ---
-- debug: var=syncs3content
-  tags: vars
-
 - name: Include tasks to sync content to S3
   include: tos3.yml
   when: syncs3content.action == "tos3"
