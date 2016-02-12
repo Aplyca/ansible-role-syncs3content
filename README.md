@@ -28,17 +28,19 @@ dependencies:
   - { role: Aplyca.SyncS3Content }
 ```
 
-Ask for confirmation
+Ask for action to perform
 --------------------
-This is a risky tasks so the role ask for a variable `confirmation`, you can add the confirmation in the playbook, like this: 
+You can prompt for the `action` to perform in the playbook, like this: 
 
 ```yaml
 ---
 - hosts: sync.server.com
   gather_facts: no
   vars_prompt:
-    - name: "confirmation"
-      prompt: "Are you sure to sync content from S3 [y/n]?"
+    - name: "action"
+      prompt: "What action you want to perform [tos3/froms3]?"
+      private: no
+      default: False
   roles:
     - { role: Aplyca.SyncS3Content, tags: ["syncs3content"] }
 ```
