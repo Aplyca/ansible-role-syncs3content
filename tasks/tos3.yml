@@ -23,3 +23,29 @@
   shell: "aws s3 sync . s3://{{ syncs3content.to.storage.bucket }} --profile {{ syncs3content.to.storage.profile }}"
   args:
     chdir: "{{ syncs3content.to.storage.dir }}"
+
+- name: "To S3: Send notification to Slack"
+  slack:
+    token: "{{ syncs3content.slack.token }}"
+    msg: "{{ syncs3content.slack.message }}"
+    attachments:
+      - title: "Sync content to S3"
+        text: "{{ syncs3content.slack.description }}"
+        color: good
+        fields:
+          - title: "DataBase"
+            value: "{{ syncs3content.to.database.name }}"
+            short: "true"
+          - title: "S3 Bucket"
+            value: "{{ syncs3content.to.storage.bucket }}"
+            short: "true"
+          - title: "Storage"
+            value: "{{ syncs3content.to.storage.dir }}"
+            short: "true"
+          - title: "Action"
+            value: "{{ syncs3content.action | upper() }}"
+            short: "true"
+    username: "{{ syncs3content.slack.username }}"
+    channel: "{{ syncs3content.slack.channel }}"
+    icon_emoji: "{{ syncs3content.slack.icon_emoji }}"
+  when: syncs3content.slack.token is defined

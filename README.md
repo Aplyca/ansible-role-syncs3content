@@ -19,13 +19,13 @@ Installation
 Using ansible galaxy:
 
 ```bash
-ansible-galaxy install aplyca.SyncS3Content
+ansible-galaxy install Aplyca.SyncS3Content
 ```
 You can add this role as a dependency for other roles, add the role to the meta/main.yml file of your own role:
 
 ```yaml
 dependencies:
-  - { role: aplyca.SyncS3Content }
+  - { role: Aplyca.SyncS3Content }
 ```
 
 Ask for confirmation
@@ -40,7 +40,7 @@ This is a risky tasks so the role ask for a variable `confirmation`, you can add
     - name: "confirmation"
       prompt: "Are you sure to sync content from S3 [y/n]?"
   roles:
-    - { role: aplyca.SyncS3Content, tags: ["syncs3content"] }
+    - { role: Aplyca.SyncS3Content, tags: ["syncs3content"] }
 ```
 
 Role Variables

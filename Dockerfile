@@ -4,8 +4,8 @@ LABEL Description="Release code with Ansible" Vendor="Aplyca" Version="0.9.1-001
 
 
 # Adding Ansible role
-ADD . /tmp/aplyca.SyncS3Content
-WORKDIR /tmp/aplyca.SyncS3Content
+ADD . /tmp/Aplyca.SyncS3Content
+WORKDIR /tmp/Aplyca.SyncS3Content
 
 # Provision image
 RUN ./build/provision.sh

@@ -4,6 +4,6 @@ dependencies:
 
 test:
   pre:
-    - sudo ln -s ansible-role-syncs3content ../aplyca.SyncS3Content
+    - sudo ln -s ansible-role-syncs3content ../Aplyca.SyncS3Content
   override:
     - tests/tests.sh

@@ -1,6 +1,6 @@
 ---
 syncs3content:
-  action: False
+  action: "{{ action }}"
   from:
     storage:
       bucket: app-storage
@@ -24,4 +24,14 @@ syncs3content:
       name: app
       host: localhost
       password: ""
-      user: ""      
+      user: ""
+  slack:
+    username: "Ansible"
+    icon_emoji: slack
+    channel: general
+    message: "Sync content of *{{ app }}*"
+    description: "The latest content of {{ app }} is in S3"
+
+app: App
+action: False
+
