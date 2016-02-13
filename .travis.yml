@@ -4,7 +4,7 @@ python: "2.7"
 
 before_install:
   - sudo apt-get update -qq
-  - ln -s ansible-role-syncs3content ../aplyca.SyncS3Content
+  - ln -s ansible-role-syncs3content ../Aplyca.SyncS3Content
 
 install:
   # Install Ansible.
