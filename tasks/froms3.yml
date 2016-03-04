@@ -1,4 +1,38 @@
 ---
+- name: "From S3: Downloading content"
+  shell: "aws s3 sync s3://{{ syncs3content.from.storage.bucket }} . --profile {{ syncs3content.from.storage.profile }}"
+  args:
+    chdir: "{{ syncs3content.from.storage.dir }}"
+
+- name: "From S3: Uncompress the DB"
+  unarchive:
+    src: "{{ syncs3content.from.storage.dir }}/{{ syncs3content.from.database.dir }}/{{ syncs3content.from.database.name }}.sql.tar.gz"
+    dest: /tmp
+    copy: no
+
+- name: "From S3: DB replacements"
+  replace:
+    dest: "/tmp/{{ syncs3content.from.database.name }}.sql"
+    regexp: "{{ item.regex }}"
+    replace: "{{ item.replace }}"
+  with_items: "{{ syncs3content.from.database.replacements }}"
+
+- name: "From S3: Import DB"
+  become: yes
+  mysql_db:
+    name: "{{ syncs3content.from.database.name }}"
+    state: import
+    target: "/tmp/{{ syncs3content.from.database.name }}.sql"
+
+- name: "From S3: Delete DB File"
+  file:
+    path: "/tmp/{{ syncs3content.from.database.name }}.sql"
+    state: absent
+
+- name: "From S3: Execute post commands, please wait ..."
+  shell: "{{ item }}"
+  with_items: "{{ syncs3content.from.post_commands }}"
+
 - name: "From S3: Send notification to Slack"
   slack:
     token: "{{ syncs3content.slack.token }}"
@@ -24,39 +58,3 @@
     channel: "{{ syncs3content.slack.channel }}"
     icon_emoji: "{{ syncs3content.slack.icon_emoji }}"
   when: syncs3content.slack.token is defined
-
-- name: "From S3: Downloading content"
-  shell: "aws s3 sync s3://{{ syncs3content.from.storage.bucket }} . --profile {{ syncs3content.from.storage.profile }}"
-  args:
-    chdir: "{{ syncs3content.from.storage.dir }}"
-
-- name: "From S3: Uncompress the DB"
-  unarchive:
-    src: "{{ syncs3content.from.storage.dir }}/{{ syncs3content.from.database.dir }}/{{ syncs3content.from.database.name }}.sql.tar.gz"
-    dest: /tmp
-    copy: no
-
-- name: "From S3: DB replacements"
-  replace:
-    dest: "/tmp/{{ syncs3content.from.database.name }}.sql"
-    regexp: "{{ item.regex }}"
-    replace: "{{ item.replace }}"
-  with_items: syncs3content.from.database.replacements
-
-- name: "From S3: Import DB"
-  become: yes
-  mysql_db:
-    name: "{{ syncs3content.from.database.name }}"
-    state: import
-    target: "/tmp/{{ syncs3content.from.database.name }}.sql"
-
-- name: "From S3: Delete DB File"
-  file:
-    path: "/tmp/{{ syncs3content.from.database.name }}.sql"
-    state: absent
-
-- name: "From S3: Execute post commands, please wait ..."
-  shell: "{{ item }}"
-  with_items: syncs3content.from.post_commands
-
-
