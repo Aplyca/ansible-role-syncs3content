@@ -6,7 +6,7 @@
 
 - name: "From S3: Uncompress the DB"
   unarchive:
-    src: "{{ syncs3content.from.storage.dir }}/{{ syncs3content.from.database.dir }}/{{ syncs3content.from.database.name }}.sql.tar.gz"
+    src: "{{ syncs3content.from.storage.dir }}/{{ syncs3content.from.database.dir }}/{{ syncs3content.from.database.name }}.{{ syncs3content.compress.suffix }}"
     dest: /tmp
     copy: no
 
@@ -28,10 +28,14 @@
   file:
     path: "/tmp/{{ syncs3content.from.database.name }}.sql"
     state: absent
+  async: 3600
+  poll: 0
 
 - name: "From S3: Execute post commands, please wait ..."
   shell: "{{ item }}"
   with_items: "{{ syncs3content.from.post_commands }}"
+  async: 3600
+  poll: 0
 
 - name: "From S3: Send notification to Slack"
   slack:

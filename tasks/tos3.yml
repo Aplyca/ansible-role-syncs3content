@@ -10,19 +10,16 @@
     login_user: "{{ syncs3content.to.database.user | default('') }}"
 
 - name: "To S3: Compress the DB"
-  shell: "tar -pczf {{ syncs3content.to.database.dir }}/{{ syncs3content.to.database.name }}.sql.tar.gz -C {{ syncs3content.to.database.dir }} {{ syncs3content.to.database.name }}.sql"
+  shell: "{{ syncs3content.compress.command }} {{ syncs3content.to.database.dir }}/{{ syncs3content.to.database.name }}.sql"
   args:
     chdir: "{{ syncs3content.to.storage.dir }}"
-
-- name: "To S3: Delete DB File"
-  file:
-    path: "{{ syncs3content.to.storage.dir }}/{{ syncs3content.to.database.dir }}/{{ syncs3content.to.database.name }}.sql"
-    state: absent
 
 - name: "To S3: Uploading content"
   shell: "aws s3 sync . s3://{{ syncs3content.to.storage.bucket }} --profile {{ syncs3content.to.storage.profile }}"
   args:
     chdir: "{{ syncs3content.to.storage.dir }}"
+  async: 3600
+  poll: 0
 
 - name: "To S3: Send notification to Slack"
   slack:

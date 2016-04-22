@@ -2,3 +2,4 @@
 custom*
 *.box
 .vault
+*.retry

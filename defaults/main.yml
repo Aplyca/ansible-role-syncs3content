@@ -1,6 +1,9 @@
 ---
 syncs3content:
   action: "{{ action }}"
+  compress:
+    command: "xz -f"
+    suffix: "xz"
   from:
     storage:
       bucket: app-storage

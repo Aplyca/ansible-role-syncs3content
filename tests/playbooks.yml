@@ -2,10 +2,3 @@
 - name: Sync S3 content
   hosts: all
   gather_facts: no
-  vars_prompt:
-    - name: "action"
-      prompt: "What action you want to perform [tos3/froms3]?"
-      private: no
-      default: False
-  roles:
-    - { role: Aplyca.SyncS3Content, tags: ["syncs3content"] }
