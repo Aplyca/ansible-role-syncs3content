@@ -10,7 +10,7 @@
     login_user: "{{ syncs3content.to.database.user | default('') }}"
 
 - name: "To S3: Compress the DB"
-  shell: "{{ syncs3content.compress.command }} {{ syncs3content.to.database.dir }}/{{ syncs3content.to.database.name }}.sql"
+  shell: "tar --remove-files -pczf {{ syncs3content.to.database.dir }}/{{ syncs3content.to.database.name }}.sql.tgz -C {{ syncs3content.to.database.dir }} {{ syncs3content.to.database.name }}.sql"
   args:
     chdir: "{{ syncs3content.to.storage.dir }}"
 
