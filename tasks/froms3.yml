@@ -30,6 +30,7 @@
     state: absent
   async: 3600
   poll: 0
+  when: "{{ syncs3content.from.database.delete_file }}"
 
 - name: "From S3: Execute post commands, please wait ..."
   shell: "{{ item }}"

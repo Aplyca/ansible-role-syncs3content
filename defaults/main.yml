@@ -13,6 +13,7 @@ syncs3content:
       password: ""
       user: ""
       replacements: []
+      delete_file: false 
     post_commands: []
     description: "The content of {{ app }} was synced from S3"
   to:
