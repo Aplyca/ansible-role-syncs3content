@@ -1,20 +1,17 @@
-Ansible Role Sync From and To S3
-====================
+# Ansible Role Sync From and To S3
 
 An Ansible role that sync app content from and to S3 on Debian/Ubuntu.
 
 [![Build Status](https://travis-ci.org/Aplyca/ansible-role-syncs3content.svg?branch=master)](https://travis-ci.org/Aplyca/ansible-role-syncs3content)
 [![Circle CI](https://circleci.com/gh/Aplyca/ansible-role-syncs3content.svg?style=svg)](https://circleci.com/gh/Aplyca/ansible-role-syncs3content)
 
-Requirements
-------------
+## Requirements
 
 Use hash behavior for variables in ansible.cfg
 See example: https://github.com/Aplyca/ansible-role-syncs3content/blob/master/tests/ansible.cfg
 See official docs: http://docs.ansible.com/intro_configuration.html#hash-behaviour
 
-Installation
-------------
+## Installation
 
 Using ansible galaxy:
 
@@ -28,9 +25,7 @@ dependencies:
   - { role: Aplyca.SyncS3Content }
 ```
 
-Ask for action to perform
---------------------
-You can prompt for the `action` to perform in the playbook, like this: 
+You can prompt for the `action` to perform in the playbook, like this:
 
 ```yaml
 ---
@@ -45,15 +40,29 @@ You can prompt for the `action` to perform in the playbook, like this:
     - { role: Aplyca.SyncS3Content, tags: ["syncs3content"] }
 ```
 
-Role Variables
---------------
+##Role Variables
+
 See default variables: https://github.com/Aplyca/ansible-role-syncs3content/blob/master/defaults/main.yml
 
-Dependencies
-------------
+## Dependencies
 
 None
 
+## Testing
+
+### Vagrant
+* You can use Vagrant to set up and provision a VM in order to run tests.
+* To know more about Vagrant: http://www.vagrantup.com
+  And Vagrant with Ansible: http://docs.vagrantup.com/v2/provisioning/ansible.html
+
+```bash
+tests/vagrant.sh
+```
+### Docker
+
+```bash
+tests/docker.sh
+```
 
 License
 -------
