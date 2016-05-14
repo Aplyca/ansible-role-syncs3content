@@ -6,7 +6,7 @@
 
 - name: "From S3: Uncompress the DB"
   unarchive:
-    src: "{{ syncs3content.from.storage.dir }}/{{ syncs3content.from.database.dir }}/{{ syncs3content.from.database.name }}.sql.tgz"
+    src: "{{ syncs3content.from.storage.dir }}/{{ syncs3content.from.database.dir }}/{{ syncs3content.from.database.name }}.sql.gz"
     dest: /tmp
     copy: no
 

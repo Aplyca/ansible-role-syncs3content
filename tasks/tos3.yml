@@ -10,9 +10,9 @@
     login_user: "{{ syncs3content.to.database.user | default('') }}"
 
 - name: "To S3: Compress the DB"
-  shell: "tar --remove-files -pczf {{ syncs3content.to.database.dir }}/{{ syncs3content.to.database.name }}.sql.tgz -C {{ syncs3content.to.database.dir }} {{ syncs3content.to.database.name }}.sql"
+  shell: "gzip -f {{ syncs3content.to.database.name }}.sql"
   args:
-    chdir: "{{ syncs3content.to.storage.dir }}"
+    chdir: "{{ syncs3content.to.storage.dir }}/{{ syncs3content.to.database.dir }}"
 
 - name: "To S3: Uploading content"
   shell: "aws s3 sync . s3://{{ syncs3content.to.storage.bucket }} --profile {{ syncs3content.to.storage.profile }}"
