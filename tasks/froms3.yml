@@ -1,44 +1,48 @@
 ---
-- name: "From S3: Downloading content"
-  shell: "aws s3 sync s3://{{ syncs3content.from.storage.bucket }} . --profile {{ syncs3content.from.storage.profile }}"
+- name: "From S3 | Downloading content"
+  shell: "aws s3 sync s3://{{ syncs3content.storage.bucket }} . --profile {{ syncs3content.storage.profile }}"
   args:
-    chdir: "{{ syncs3content.from.storage.dir }}"
+    chdir: "{{ syncs3content.storage.dir }}"
 
-- name: "From S3: Uncompress the DB"
-  unarchive:
-    src: "{{ syncs3content.from.storage.dir }}/{{ syncs3content.from.database.dir }}/{{ syncs3content.from.database.name }}.sql.gz"
-    dest: /tmp
-    copy: no
+- name: "From S3 | Uncompress the DB"
+  shell: "gzip -dfk {{ item.name }}.sql.gz"
+  args:
+    chdir: "{{ syncs3content.storage.dir }}/{{ syncs3content.storage.dbdir }}"    
+  with_items: "{{ syncs3content.from.databases }}"
 
-- name: "From S3: DB replacements"
+- name: "From S3 | DB replacements"
   replace:
-    dest: "/tmp/{{ syncs3content.from.database.name }}.sql"
+    dest: "{{ syncs3content.storage.dir }}/{{ syncs3content.storage.dbdir }}/{{ syncs3content.from.databases.0.name }}.sql"
     regexp: "{{ item.regex }}"
-    replace: "{{ item.replace }}"
-  with_items: "{{ syncs3content.from.database.replacements }}"
+    replace: "{{ item.replace }}" 
+  with_items: "{{ syncs3content.from.databases.0.replacements }}"
 
-- name: "From S3: Import DB"
+- name: "From S3 | Import DB"
   become: yes
   mysql_db:
-    name: "{{ syncs3content.from.database.name }}"
+    name: "{{ item.name }}"
     state: import
-    target: "/tmp/{{ syncs3content.from.database.name }}.sql"
+    target: "{{ syncs3content.storage.dir }}/{{ syncs3content.storage.dbdir }}/{{ item.name }}.sql"  
+  with_items: "{{ syncs3content.from.databases }}"
 
-- name: "From S3: Delete DB File"
+- name: "From S3 | Delete DB File"
   file:
-    path: "/tmp/{{ syncs3content.from.database.name }}.sql"
+    path: "{{ item.name }}.sql"
     state: absent
+  args:
+    chdir: "{{ syncs3content.storage.dir }}/{{ syncs3content.storage.dbdir }}"    
   async: 3600
   poll: 0
-  when: "{{ syncs3content.from.database.delete_file }}"
+  with_items: "{{ syncs3content.from.databases }}"
+  when: "{{ syncs3content.from.delete_file }}"
 
-- name: "From S3: Execute post commands, please wait ..."
+- name: "From S3 | Execute post commands, please wait ..."
   shell: "{{ item }}"
   with_items: "{{ syncs3content.from.post_commands }}"
   async: 3600
   poll: 0
 
-- name: "From S3: Send notification to Slack"
+- name: "From S3 | Send notification to Slack"
   slack:
     token: "{{ syncs3content.slack.token }}"
     msg: "{{ syncs3content.slack.message }}"
@@ -48,13 +52,13 @@
         color: good
         fields:
           - title: "DataBase"
-            value: "{{ syncs3content.from.database.name }}"
+            value: "{% for db in syncs3content.from.databases %}{{ db.name }} {% endfor %}"
             short: "true"
           - title: "S3 Bucket"
-            value: "{{ syncs3content.from.storage.bucket }}"
+            value: "{{ syncs3content.storage.bucket }}"
             short: "true"
           - title: "Storage directory"
-            value: "{{ syncs3content.from.storage.dir }}"
+            value: "{{ syncs3content.storage.dir }}"
             short: "true"
           - title: "Action"
             value: "{{ syncs3content.action }}"

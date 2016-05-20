@@ -1,5 +1,5 @@
 #!/bin/bash
-# Test AWS provisioned with Ansible
+# Test SyncS3Content provisioned with Ansible
 
 cd $(dirname "$0") && cd ..
 

@@ -1,27 +1,39 @@
 ---
-- name: "To S3: Export the DB"
-  become: yes
-  mysql_db:
-    name: "{{ syncs3content.to.database.name }}"
-    state: dump
-    target: "{{ syncs3content.to.storage.dir }}/{{ syncs3content.to.database.dir }}/{{ syncs3content.to.database.name }}.sql"
-    login_host: "{{ syncs3content.to.database.host | default('localhost') }}"
-    login_password: "{{ syncs3content.to.database.password | default('') }}"
-    login_user: "{{ syncs3content.to.database.user | default('') }}"
-
-- name: "To S3: Compress the DB"
-  shell: "gzip -f {{ syncs3content.to.database.name }}.sql"
+- name: "To S3 | Uploading content"
+  shell: "aws s3 sync . s3://{{ syncs3content.storage.bucket }} --exclude \"{{ syncs3content.storage.dbdir }}/*.sql.gz\" --profile {{ syncs3content.storage.profile }}"
   args:
-    chdir: "{{ syncs3content.to.storage.dir }}/{{ syncs3content.to.database.dir }}"
-
-- name: "To S3: Uploading content"
-  shell: "aws s3 sync . s3://{{ syncs3content.to.storage.bucket }} --profile {{ syncs3content.to.storage.profile }}"
-  args:
-    chdir: "{{ syncs3content.to.storage.dir }}"
+    chdir: "{{ syncs3content.storage.dir }}"
   async: 3600
   poll: 0
+  tags: sync
 
-- name: "To S3: Send notification to Slack"
+- name: "To S3 | Export the DB"
+  become: yes
+  mysql_db:
+    name: "{{ item.name }}"
+    state: dump
+    target: "{{ syncs3content.storage.dir }}/{{ syncs3content.storage.dbdir }}/{{ item.name }}.sql"
+    login_host: "{{ item.host | default('localhost') }}"
+    login_password: "{{ item.password | default('') }}"
+    login_user: "{{ item.user | default('') }}"
+  with_items: "{{ syncs3content.to.databases }}"
+
+- name: "To S3 | Compress the DB"
+  shell: "gzip -f {{ item.name }}.sql"
+  args:
+    chdir: "{{ syncs3content.storage.dir }}/{{ syncs3content.storage.dbdir }}"
+  with_items: "{{ syncs3content.to.databases }}"
+
+- name: "To S3 | Upload DB files"
+  shell: "aws s3api put-object --bucket {{ syncs3content.storage.bucket }} --key {{ syncs3content.storage.dbdir }}/{{ item.name }}.sql.gz --body {{ item.name }}.sql.gz --profile {{ syncs3content.storage.profile }}"
+  args:
+    chdir: "{{ syncs3content.storage.dir }}/{{ syncs3content.storage.dbdir }}"
+  async: 3600
+  poll: 0
+  with_items: "{{ syncs3content.to.databases }}"
+  tags: upload
+
+- name: "To S3 | Send notification to Slack"
   slack:
     token: "{{ syncs3content.slack.token }}"
     msg: "{{ syncs3content.slack.message }}"
@@ -31,13 +43,13 @@
         color: good
         fields:
           - title: "DataBase"
-            value: "{{ syncs3content.to.database.name }}"
+            value: "{% for db in syncs3content.to.databases %}{{ db.name }} {% endfor %}"
             short: "true"
           - title: "S3 Bucket"
-            value: "{{ syncs3content.to.storage.bucket }}"
+            value: "{{ syncs3content.storage.bucket }}"
             short: "true"
           - title: "Storage directory"
-            value: "{{ syncs3content.to.storage.dir }}"
+            value: "{{ syncs3content.storage.dir }}"
             short: "true"
           - title: "Action"
             value: "{{ syncs3content.action }}"
@@ -45,4 +57,6 @@
     username: "{{ syncs3content.slack.username }}"
     channel: "{{ syncs3content.slack.channel }}"
     icon_emoji: "{{ syncs3content.slack.icon_emoji }}"
+  async: 3600
+  poll: 0
   when: syncs3content.slack.token is defined
