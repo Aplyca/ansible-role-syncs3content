@@ -1,6 +1,6 @@
 ---
 app: App
-action: False
+action: "{{ False }}"
 
 syncs3content:
   action: "{{ action }}"
@@ -12,7 +12,7 @@ syncs3content:
     storage:
       bucket: "{{ app | lower() }}-storage"
       dir: "/mnt/storage/{{ app | lower() }}"
-      profile: default
+      profile: "{{ False }}"
       dbdir: data/sql/mysql
   to:
     databases: []
@@ -20,7 +20,7 @@ syncs3content:
     storage:
       bucket: "{{ app | lower() }}-storage"
       dir: "/mnt/storage/{{ app | lower() }}"
-      profile: default
+      profile: "{{ False }}"
       dbdir: data/sql/mysql
   slack:
     username: "Ansible"

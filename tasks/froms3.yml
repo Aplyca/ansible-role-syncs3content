@@ -1,6 +1,6 @@
 ---
 - name: "From S3 | Downloading content"
-  shell: "aws s3 sync s3://{{ syncs3content.from.storage.bucket }} .{% if syncs3content.from.storage.profile != '' %} --profile {{ syncs3content.from.storage.profile }}{% endif %}"
+  shell: "aws s3 sync s3://{{ syncs3content.from.storage.bucket }} .{% if syncs3content.from.storage.profile %} --profile {{ syncs3content.from.storage.profile }}{% endif %}"
   args:
     chdir: "{{ syncs3content.from.storage.dir }}"
 

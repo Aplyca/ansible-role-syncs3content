@@ -1,6 +1,6 @@
 ---
 - name: "To S3 | Uploading content"
-  shell: "aws s3 sync . s3://{{ syncs3content.to.storage.bucket }} --exclude \"{{ syncs3content.to.storage.dbdir }}/*.sql.gz\"{% if syncs3content.to.storage.profile != '' %} --profile {{ syncs3content.to.storage.profile }}{% endif %}"
+  shell: "aws s3 sync . s3://{{ syncs3content.to.storage.bucket }} --exclude \"{{ syncs3content.to.storage.dbdir }}/*.sql.gz\"{% if syncs3content.to.storage.profile %} --profile {{ syncs3content.to.storage.profile }}{% endif %}"
   args:
     chdir: "{{ syncs3content.to.storage.dir }}"
   async: 3600
