@@ -1,6 +1,6 @@
 ---
 - name: "From S3 | Downloading content"
-  shell: "aws s3 sync s3://{{ syncs3content.from.storage.bucket }} . --profile {{ syncs3content.from.storage.profile }}"
+  shell: "aws s3 sync s3://{{ syncs3content.from.storage.bucket }} .{% if syncs3content.from.storage.profile != '' %} --profile {{ syncs3content.from.storage.profile }}{% endif %}"
   args:
     chdir: "{{ syncs3content.from.storage.dir }}"
 
@@ -22,7 +22,7 @@
   mysql_db:
     name: "{{ item.name }}"
     state: import
-    target: "{{ syncs3content.from.storage.dir }}/{{ syncs3content.from.storage.dbdir }}/{{ item.name }}.sql"  
+    target: "{{ syncs3content.from.storage.dir }}/{{ syncs3content.from.storage.dbdir }}/{{ item.name }}.sql"
   with_items: "{{ syncs3content.from.databases }}"
 
 - name: "From S3 | Delete DB File"
