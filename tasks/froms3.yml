@@ -1,20 +1,20 @@
 ---
 - name: "From S3 | Downloading content"
-  shell: "aws s3 sync s3://{{ syncs3content.storage.bucket }} . --profile {{ syncs3content.storage.profile }}"
+  shell: "aws s3 sync s3://{{ syncs3content.from.storage.bucket }} . --profile {{ syncs3content.from.storage.profile }}"
   args:
-    chdir: "{{ syncs3content.storage.dir }}"
+    chdir: "{{ syncs3content.from.storage.dir }}"
 
 - name: "From S3 | Uncompress the DB"
   shell: "gzip -dfk {{ item.name }}.sql.gz"
   args:
-    chdir: "{{ syncs3content.storage.dir }}/{{ syncs3content.storage.dbdir }}"    
+    chdir: "{{ syncs3content.from.storage.dir }}/{{ syncs3content.from.storage.dbdir }}"
   with_items: "{{ syncs3content.from.databases }}"
 
 - name: "From S3 | DB replacements"
   replace:
-    dest: "{{ syncs3content.storage.dir }}/{{ syncs3content.storage.dbdir }}/{{ syncs3content.from.databases.0.name }}.sql"
+    dest: "{{ syncs3content.from.storage.dir }}/{{ syncs3content.from.storage.dbdir }}/{{ syncs3content.from.databases.0.name }}.sql"
     regexp: "{{ item.regex }}"
-    replace: "{{ item.replace }}" 
+    replace: "{{ item.replace }}"
   with_items: "{{ syncs3content.from.databases.0.replacements }}"
 
 - name: "From S3 | Import DB"
@@ -22,7 +22,7 @@
   mysql_db:
     name: "{{ item.name }}"
     state: import
-    target: "{{ syncs3content.storage.dir }}/{{ syncs3content.storage.dbdir }}/{{ item.name }}.sql"  
+    target: "{{ syncs3content.from.storage.dir }}/{{ syncs3content.from.storage.dbdir }}/{{ item.name }}.sql"  
   with_items: "{{ syncs3content.from.databases }}"
 
 - name: "From S3 | Delete DB File"
@@ -30,7 +30,7 @@
     path: "{{ item.name }}.sql"
     state: absent
   args:
-    chdir: "{{ syncs3content.storage.dir }}/{{ syncs3content.storage.dbdir }}"    
+    chdir: "{{ syncs3content.from.storage.dir }}/{{ syncs3content.from.storage.dbdir }}"
   async: 3600
   poll: 0
   with_items: "{{ syncs3content.from.databases }}"
@@ -55,10 +55,10 @@
             value: "{% for db in syncs3content.from.databases %}{{ db.name }} {% endfor %}"
             short: "true"
           - title: "S3 Bucket"
-            value: "{{ syncs3content.storage.bucket }}"
+            value: "{{ syncs3content.from.storage.bucket }}"
             short: "true"
           - title: "Storage directory"
-            value: "{{ syncs3content.storage.dir }}"
+            value: "{{ syncs3content.from.storage.dir }}"
             short: "true"
           - title: "Action"
             value: "{{ syncs3content.action }}"

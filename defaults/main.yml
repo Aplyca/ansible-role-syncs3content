@@ -4,19 +4,24 @@ action: False
 
 syncs3content:
   action: "{{ action }}"
-  storage:
-    bucket: app-storage
-    dir: /mnt/storage/app
-    profile: default
-    dbdir: data/sql/mysql
   from:
     databases: []
     post_commands: []
     description: "The content of {{ app }} was synced from S3"
-    delete_file: False    
+    delete_file: False
+    storage:
+      bucket: "{{ app | lower() }}-storage"
+      dir: "/mnt/storage/{{ app | lower() }}"
+      profile: default
+      dbdir: data/sql/mysql
   to:
     databases: []
     description: "The latest content of {{ app }} was synced to S3"
+    storage:
+      bucket: app-storage
+      dir: /mnt/storage/app
+      profile: default
+      dbdir: data/sql/mysql
   slack:
     username: "Ansible"
     icon_emoji: slack

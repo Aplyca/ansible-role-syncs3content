@@ -1,8 +1,8 @@
 ---
 - name: "To S3 | Uploading content"
-  shell: "aws s3 sync . s3://{{ syncs3content.storage.bucket }} --exclude \"{{ syncs3content.storage.dbdir }}/*.sql.gz\" --profile {{ syncs3content.storage.profile }}"
+  shell: "aws s3 sync . s3://{{ syncs3content.to.storage.bucket }} --exclude \"{{ syncs3content.to.storage.dbdir }}/*.sql.gz\" --profile {{ syncs3content.to.storage.profile }}"
   args:
-    chdir: "{{ syncs3content.storage.dir }}"
+    chdir: "{{ syncs3content.to.storage.dir }}"
   async: 3600
   poll: 0
   tags: sync
@@ -12,25 +12,28 @@
   mysql_db:
     name: "{{ item.name }}"
     state: dump
-    target: "{{ syncs3content.storage.dir }}/{{ syncs3content.storage.dbdir }}/{{ item.name }}.sql"
+    target: "{{ syncs3content.to.storage.dir }}/{{ syncs3content.to.storage.dbdir }}/{{ item.name }}.sql"
     login_host: "{{ item.host | default('localhost') }}"
     login_password: "{{ item.password | default('') }}"
     login_user: "{{ item.user | default('') }}"
   with_items: "{{ syncs3content.to.databases }}"
+  no_log: True
 
 - name: "To S3 | Compress the DB"
   shell: "gzip -f {{ item.name }}.sql"
   args:
-    chdir: "{{ syncs3content.storage.dir }}/{{ syncs3content.storage.dbdir }}"
+    chdir: "{{ syncs3content.to.storage.dir }}/{{ syncs3content.to.storage.dbdir }}"
   with_items: "{{ syncs3content.to.databases }}"
+  no_log: True
 
 - name: "To S3 | Upload DB files"
-  shell: "aws s3api put-object --bucket {{ syncs3content.storage.bucket }} --key {{ syncs3content.storage.dbdir }}/{{ item.name }}.sql.gz --body {{ item.name }}.sql.gz --profile {{ syncs3content.storage.profile }}"
+  shell: "aws s3api put-object --bucket {{ syncs3content.to.storage.bucket }} --key {{ syncs3content.to.storage.dbdir }}/{{ item.name }}.sql.gz --body {{ item.name }}.sql.gz --profile {{ syncs3content.to.storage.profile }}"
   args:
-    chdir: "{{ syncs3content.storage.dir }}/{{ syncs3content.storage.dbdir }}"
+    chdir: "{{ syncs3content.to.storage.dir }}/{{ syncs3content.to.storage.dbdir }}"
   async: 3600
   poll: 0
   with_items: "{{ syncs3content.to.databases }}"
+  no_log: True
   tags: upload
 
 - name: "To S3 | Send notification to Slack"
@@ -46,10 +49,10 @@
             value: "{% for db in syncs3content.to.databases %}{{ db.name }} {% endfor %}"
             short: "true"
           - title: "S3 Bucket"
-            value: "{{ syncs3content.storage.bucket }}"
+            value: "{{ syncs3content.to.storage.bucket }}"
             short: "true"
           - title: "Storage directory"
-            value: "{{ syncs3content.storage.dir }}"
+            value: "{{ syncs3content.to.storage.dir }}"
             short: "true"
           - title: "Action"
             value: "{{ syncs3content.action }}"
