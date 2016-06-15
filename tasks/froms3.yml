@@ -10,12 +10,11 @@
     chdir: "{{ syncs3content.from.storage.dir }}/{{ syncs3content.from.storage.dbdir }}"
   with_items: "{{ syncs3content.from.databases }}"
 
-- name: "From S3 | DB replacements"
-  replace:
-    dest: "{{ syncs3content.from.storage.dir }}/{{ syncs3content.from.storage.dbdir }}/{{ syncs3content.from.databases.0.name }}.sql"
-    regexp: "{{ item.regex }}"
-    replace: "{{ item.replace }}"
-  with_items: "{{ syncs3content.from.databases.0.replacements }}"
+- name: "From S3 | Include DB replacements"
+  include: db_replacements.yml
+  with_items: "{{ syncs3content.from.databases }}"
+  loop_control:
+    loop_var: db_item
 
 - name: "From S3 | Import DB"
   become: yes

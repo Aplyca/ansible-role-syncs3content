@@ -1,0 +1,8 @@
+---
+- name: "From S3 | DB replacements"
+  replace:
+    dest: "{{ syncs3content.from.storage.dir }}/{{ syncs3content.from.storage.dbdir }}/{{ db_item.name }}.sql"
+    regexp: "{{ item.regex }}"
+    replace: "{{ item.replace }}"
+  with_items: "{{ db_item.replacements | default([]) }}"
+  when: db_item.replacements is defined
