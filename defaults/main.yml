@@ -18,8 +18,8 @@ syncs3content:
     databases: []
     description: "The latest content of {{ app }} was synced to S3"
     storage:
-      bucket: app-storage
-      dir: /mnt/storage/app
+      bucket: "{{ app | lower() }}-storage"
+      dir: "/mnt/storage/{{ app | lower() }}"
       profile: default
       dbdir: data/sql/mysql
   slack:
