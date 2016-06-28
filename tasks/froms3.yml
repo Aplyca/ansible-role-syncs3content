@@ -1,4 +1,12 @@
 ---
+- name: Fix ownership of content directory
+  become: yes
+  file:
+    path: "{{ syncs3content.from.storage.dir }}"
+    state: directory
+    owner: "{{ syncs3content.from.storage.user }}"
+    recurse: yes
+
 - name: "From S3 | Downloading content"
   shell: "aws s3 sync s3://{{ syncs3content.from.storage.bucket }} .{% if syncs3content.from.storage.profile %} --profile {{ syncs3content.from.storage.profile }}{% endif %}"
   args:

@@ -1,4 +1,0 @@
----
-- name: Sync S3 content
-  hosts: all
-  gather_facts: no 

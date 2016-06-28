@@ -1,2 +1,7 @@
 ---
-action: tos3    
+action: froms3
+
+syncs3content:
+  from:
+    storage:
+      user: root

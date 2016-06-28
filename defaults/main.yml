@@ -14,6 +14,7 @@ syncs3content:
       dir: "/mnt/storage/{{ app | lower() }}"
       profile: "{{ False }}"
       dbdir: data/sql/mysql
+      user: ubuntu
   to:
     databases: []
     description: "The latest content of {{ app }} was synced to S3"
