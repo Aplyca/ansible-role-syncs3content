@@ -27,7 +27,7 @@
   no_log: True
 
 - name: "To S3 | Upload DB files"
-  shell: "aws s3api put-object --bucket {{ syncs3content.to.storage.bucket }} --key {{ syncs3content.to.storage.dbdir }}/{{ item.name }}.sql.gz --body {{ item.name }}.sql.gz --profile {{ syncs3content.to.storage.profile }}"
+  shell: "aws s3api put-object --bucket {{ syncs3content.to.storage.bucket }} --key {{ syncs3content.to.storage.dbdir }}/{{ item.name }}.sql.gz --body {{ item.name }}.sql.gz{% if syncs3content.to.storage.profile %} --profile {{ syncs3content.to.storage.profile }}{% endif %}"
   args:
     chdir: "{{ syncs3content.to.storage.dir }}/{{ syncs3content.to.storage.dbdir }}"
   async: 3600
