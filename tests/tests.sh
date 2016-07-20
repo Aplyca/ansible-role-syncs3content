@@ -3,8 +3,10 @@
 
 cd $(dirname "$0") && cd ..
 
-echo "Checking syntax"
+echo "Install dependencies"
+ansible-galaxy install -r roles/requirements.yml
 
+echo "Checking syntax"
 ansible-playbook -i inventories/local playbooks.yml --connection=local --extra-vars "@tests/tests.yml" --syntax-check
 
 echo "Running role"
@@ -12,3 +14,6 @@ ansible-playbook -i inventories/local playbooks.yml --connection=local --extra-v
 
 echo "Checking idempotence"
 ansible-playbook -i inventories/local playbooks.yml --connection=local --extra-vars "@tests/tests.yml" | grep -q 'changed=0.*failed=0' && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && exit 1)
+
+echo "Removing downaloded Ansible Galaxy roles"
+rm -Rf `ls -1 -d roles/*/`
