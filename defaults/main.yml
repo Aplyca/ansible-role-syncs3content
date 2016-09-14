@@ -2,6 +2,7 @@
 action: "{{ False }}"
 
 syncs3content:
+  debug: True
   action: "{{ action }}"
   from:
     databases: []
