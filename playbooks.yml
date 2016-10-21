@@ -9,6 +9,3 @@
       default: False
   roles:
     - { role: Aplyca.SyncS3Content, tags: ["syncs3content"] }
-  tasks:
-    - debug: var=syncs3content
-      tags: vars

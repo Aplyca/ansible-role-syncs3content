@@ -1,4 +1,7 @@
 ---
+- debug: var=syncs3content verbosity=1
+  tags: vars
+
 - block:
     - name: Sync content to S3
       include: tos3.yml
