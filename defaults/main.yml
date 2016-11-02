@@ -5,6 +5,7 @@ syncs3content:
   debug: True
   action: "{{ action }}"
   from:
+    mysql_sudo: True    
     databases: []
     post_commands: []
     description: "The content of App was synced from S3"
@@ -16,6 +17,7 @@ syncs3content:
       dbdir: data/sql/mysql
       user: ubuntu
   to:
+    mysql_sudo: True
     databases: []
     description: "The latest content of App was synced to S3"
     storage:
