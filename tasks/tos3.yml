@@ -62,4 +62,6 @@
     icon_emoji: "{{ syncs3content.slack.icon_emoji }}"
   async: 3600
   poll: 0
-  when: syncs3content.slack.token is defined
+  when:
+    - syncs3content.slack.token is defined
+    - syncs3content.slack.channel

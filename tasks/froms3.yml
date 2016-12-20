@@ -73,4 +73,8 @@
     username: "{{ syncs3content.slack.username }}"
     channel: "{{ syncs3content.slack.channel }}"
     icon_emoji: "{{ syncs3content.slack.icon_emoji }}"
-  when: syncs3content.slack.token is defined
+  async: 3600
+  poll: 0    
+  when:
+    - syncs3content.slack.token is defined
+    - syncs3content.slack.channel
