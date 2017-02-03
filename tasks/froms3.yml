@@ -27,7 +27,7 @@
 - name: "From S3 | Import DB"
   become: yes
   mysql_db:
-    name: "{{ item.name }}"
+    name: "{{ item.name }}{{ syncs3content.from.db_suffix }}"
     state: import
     target: "{{ syncs3content.from.storage.dir }}/{{ syncs3content.from.storage.dbdir }}/{{ item.name }}.sql"
   with_items: "{{ syncs3content.from.databases }}"

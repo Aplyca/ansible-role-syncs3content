@@ -5,7 +5,8 @@ syncs3content:
   debug: True
   action: "{{ action }}"
   from:
-    mysql_sudo: True    
+    mysql_sudo: True
+    db_suffix: ""  
     databases: []
     post_commands: []
     description: "The content of App was synced from S3"
