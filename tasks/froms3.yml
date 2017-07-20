@@ -41,7 +41,7 @@
   async: 3600
   poll: 0
   with_items: "{{ syncs3content.from.databases }}"
-  when: "{{ syncs3content.from.delete_file }}"
+  when: syncs3content.from.delete_file
 
 - name: "From S3 | Execute post commands, please wait ..."
   shell: "{{ item }}"
